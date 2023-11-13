@@ -6,7 +6,7 @@ import random
 l=[]
 o={}
 
-target_url="https://www.lego.com/en-us/product/medieval-blacksmith-21325"
+target_url="https://www.lego.com/en-us/product/dried-flower-centrepiece-10314?icmp=HP-SHH-Standard-IC_Hero_10313_10314_Product_LP-P-IC-6SZAD9IN7H"
 
 useragents=['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.88 Safari/537.36',
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36',
@@ -53,7 +53,7 @@ except:
     o["title"]=None
     
 try:
-    o["set_number"]=soup.find("div",{"data-test":"item-value"}).find("span",{"class":"Markup__StyledMarkup-nc8x20-0 epIXnJ"}).text
+    o["set_number"]=soup.find("span",{"itemprop":"sku"}).text
     i = o
 except:
     o["set_number"]=None
