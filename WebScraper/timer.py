@@ -11,7 +11,7 @@ def addProductPriceEntry(scrapeObject, target_url):
     conn = psycopg2.connect("dbname=LegoScraper user=postgres password=123qwe")
     cur = conn.cursor()
     try:
-        cur.execute("INSERT INTO price(product_id, price, date, site_id, time) VALUES (%i, %d, '%s', %i, '%s')" % (scrapeObject["set_number"], scrapeObject["price"], scrapeObject["dateTime"], scrapeObject["site"], scrapeObject["dateTime"]))
+        cur.execute("INSERT INTO price(product_url, price, date, site_id, time) VALUES ('%s', %d, '%s', %i, '%s')" % (target_url, scrapeObject["price"], scrapeObject["dateTime"], scrapeObject["site"], scrapeObject["dateTime"]))
     except:
         print("OH NO! " + cur)
     conn.commit()
@@ -27,12 +27,15 @@ def trackerRunner():
     cur.close()
     conn.close()
     for item in result:
-        i = scrapeLego(item)
+        if "lego.com" in item:
+            i = scrapeLego(item)
+        elif "bestbuy.com" in item:
+            i = scrapeBestBuy(item)
         addProductPriceEntry(i, item)
         print("added "+item)
         print(i)
 
 #def startScheduledTimer():
 scheduler = BlockingScheduler()
-scheduler.add_job(trackerRunner, 'interval', seconds=15)
+scheduler.add_job(trackerRunner, 'interval', hours=6)
 scheduler.start()

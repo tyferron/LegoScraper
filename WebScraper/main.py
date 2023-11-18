@@ -19,12 +19,13 @@ def addProductPriceEntry(scrapeObject, target_url):
     pid = 0
     try:
         cur.execute("INSERT INTO products(product_id, product_name, product_url) VALUEs (%i, '%s', '%s')" % (scrapeObject["set_number"], scrapeObject["name"], target_url))
-        cur.execute("SELECT id FROM products WHERE product_url = '%s';" % target_url)
-        pid = result = [item for item, in cur]
-        conn.commit()
+        #cur.execute("SELECT id FROM products WHERE product_url = '%s';" % target_url)
+        #pid = result = [item for item, in cur]
     except:
         print("Product %i exists in DB" % scrapeObject["set_number"])
-    cur.execute("INSERT INTO price(product_id, price, date, site_id, time) VALUES (%i, %d, '%s', %i, '%s')" % (scrapeObject["set_number"], scrapeObject["price"], scrapeObject["dateTime"], scrapeObject["site"], scrapeObject["dateTime"]))
+
+    #cur.execute("INSERT INTO price(product_url, price, date, site_id, time) VALUES ('%s', %d, '%s', %i, '%s')" % (target_url, scrapeObject["price"], scrapeObject["dateTime"], scrapeObject["site"], scrapeObject["dateTime"]))
+
     conn.commit()
     cur.close()
     conn.close()

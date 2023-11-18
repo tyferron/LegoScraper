@@ -43,8 +43,6 @@ def scrapeBestBuy(target_url):
     
     headers={"User-Agent":useragents[random.randint(0,30)],"accept-language": "en-US,en;q=0.9","accept-encoding": "gzip, deflate, br","accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"}
     
-    target_url="https://www.bestbuy.com/site/lego-star-wars-millennium-falcon-75192/6425417.p?skuId=6425417"
-    
     resp = requests.get(target_url, headers = headers)
     
     soup=BeautifulSoup(resp.text, 'html.parser')
@@ -67,6 +65,6 @@ def scrapeBestBuy(target_url):
         o["price"]=None
     
     o["dateTime"]=datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-    o["site"]=2
+    o["site"]=4
     
     return(o)

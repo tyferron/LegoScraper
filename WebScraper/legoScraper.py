@@ -67,6 +67,6 @@ def scrapeLego(target_url):
         except:
             o["price"]=None
     o["dateTime"]=datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-    o["site"]=1
+    o["site"]=3
     
     return(o)
