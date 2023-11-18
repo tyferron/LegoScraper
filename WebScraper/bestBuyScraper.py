@@ -4,7 +4,8 @@ import re
 import random
 from datetime import datetime, timezone
 
-def scrapeLego(target_url):
+def scrapeBestBuy(target_url):
+
     l=[]
     o={}
     
@@ -42,31 +43,30 @@ def scrapeLego(target_url):
     
     headers={"User-Agent":useragents[random.randint(0,30)],"accept-language": "en-US,en;q=0.9","accept-encoding": "gzip, deflate, br","accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"}
     
+    target_url="https://www.bestbuy.com/site/lego-star-wars-millennium-falcon-75192/6425417.p?skuId=6425417"
+    
     resp = requests.get(target_url, headers = headers)
-    print(resp.status_code)
     
     soup=BeautifulSoup(resp.text, 'html.parser')
-        
+    
     try:
-        o["set_number"]=int(soup.find("span",{"itemprop":"sku"}).text)
+        title = soup.find('h1', {'class':'v-fw-regular'}).text.strip()
+        print(title)
+        setNum = title[-5:]
+        title = title[7:len(title)-6]
+        o["set_number"]=int(setNum)
+        o["name"]=title
     except:
         o["set_number"]=None
-        
-    try:
-        o["name"]=soup.find('h1', {'data-test':'product-overview-name'}).text.strip()
-    except: 
         o["name"]=None
         
     try:
-        p = re.findall("\d+\.\d+", soup.find("div",{"class":"kUhdX"}).find("span",{"data-test":"product-price-sale"}).text)
+        p = re.findall("\d+\.\d+", soup.find("div",{"data-testid":"customer-price"}).find("span",{"aria-hidden":"true"}).text)
         o["price"]=float(p[0])
     except:
-        try:
-            p = re.findall("\d+\.\d+", soup.find("div",{"class":"kUhdX"}).find("span",{"data-test":"product-price"}).text)
-            o["price"]=float(p[0])
-        except:
-            o["price"]=None
+        o["price"]=None
+    
     o["dateTime"]=datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-    o["site"]=1
+    o["site"]=2
     
     return(o)
