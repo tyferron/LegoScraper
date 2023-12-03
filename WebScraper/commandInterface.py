@@ -12,19 +12,13 @@ conn = psycopg2.connect("dbname=LegoScraper user=postgres password=123qwe")
 cur = conn.cursor()
 
 def insertProductPriceEntry(scrapeObject, target_url):
-
-    pid = 0
     try:
         cur.execute("INSERT INTO products(product_id, product_name, product_url) VALUEs (%i, '%s', '%s')" % (scrapeObject["set_number"], scrapeObject["name"], target_url))
-        #cur.execute("SELECT id FROM products WHERE product_url = '%s';" % target_url)
-        #pid = result = [item for item, in cur]
         conn.commit()
         cur.execute("INSERT INTO price(product_url, price, date, site_id, time) VALUES ('%s', %d, '%s', %i, '%s')" % (target_url, scrapeObject["price"], scrapeObject["dateTime"], scrapeObject["site"], scrapeObject["dateTime"]))
         conn.commit()
     except:
         print("Product %i exists in DB" % scrapeObject["set_number"])
-
-    #cur.execute("INSERT INTO price(product_url, price, date, site_id, time) VALUES ('%s', %d, '%s', %i, '%s')" % (target_url, scrapeObject["price"], scrapeObject["dateTime"], scrapeObject["site"], scrapeObject["dateTime"]))
 
     conn.commit()
     
@@ -66,10 +60,7 @@ def userInput():
                 result = cur.fetchall()
                 print(result)
             case "pricegraph":
-                if commandList[2] == "Best":
-                    commandList[2] = "Best Buy"
-                    del commandList[3]
-                if commandList.len == 2:
+                if len(commandList) == 2:
                     transaction="""SELECT date
                                     FROM price 
                                     INNER JOIN products USING (product_url)
@@ -111,7 +102,10 @@ def userInput():
                     plt.title("Price over time for %s for all sites" % (commandList[1]))  # add title 
                     plt.gcf().autofmt_xdate()
                     plt.show()
-                elif commandList.len > 2:
+                elif len(commandList) > 2:
+                    if commandList[2] == "Best":
+                        commandList[2] = "Best Buy"
+                        del commandList[3]
                     transaction="""SELECT date
                                     FROM price 
                                     INNER JOIN products USING (product_url)
@@ -135,5 +129,30 @@ def userInput():
                     plt.title("Price over time for %s at %s" % (commandList[1], commandList[2]))  # add title 
                     plt.gcf().autofmt_xdate()
                     plt.show()
+            case "siteproducts":
+                data = {}
+                if commandList[1] == "Best":
+                    commandList[1] = "Best Buy"
+                    del commandList[2]
+                transaction = """SELECT DISTINCT product_name, product_id, price
+                                FROM price 
+                                INNER JOIN products USING (product_url)
+                                INNER JOIN sites USING (site_id)
+                                WHERE site_name = '%s'
+                                ORDER BY product_id ASC;""" % commandList[1]
+                cur.execute(transaction)
+                result = cur.fetchall()
+                
+                for i in result:
+                    data["%i %s"%(int(i[1]), i[0])] = i[2]
+                sets = list(data.keys())
+                values = list(data.values())
+                plt.bar(sets, values, color ='maroon')
+ 
+                plt.xlabel("Sets tracked")
+                plt.ylabel("Price")
+                plt.title("Sets for %s" % commandList[1])
+                plt.gcf().autofmt_xdate()
+                plt.show()
             case "exit":
                 exit()

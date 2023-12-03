@@ -35,8 +35,8 @@ def trackerRunner():
         print("added "+item)
         print(i)
 
-#def startScheduledTimer():
-print("Tracker Started")
-scheduler = BlockingScheduler()
-scheduler.add_job(trackerRunner, 'interval', hours=6)
-scheduler.start()
+def startScheduledTimer():
+    print("Tracker Started")
+    scheduler = BlockingScheduler()
+    scheduler.add_job(trackerRunner, 'interval', hours=6)
+    scheduler.start()
